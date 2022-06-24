@@ -1,55 +1,43 @@
-import logo from './logo.svg';
+import React from 'react';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import store from './redux/store';
 import './App.css';
-import React, { useState, useEffect } from 'react';
-import Page1 from './Page1';
-import Page2 from './Page2';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
-import Switch from './Switch';
+import { nextPage, prevPage } from './redux/page';
+import Welcome from './components/pages/Welcome';
+import Experties from './components/pages/Experties';
+import Brands from './components/pages/Brands';
 
-function App() {
-  console.log('App');
-  const [page, setPage] = useState(0);
-  const [name, setName] = useState('');
-  const [nextPage, setNextPage] = useState(0);
+const ArrayListOfPages = [Welcome, Experties, Brands];
 
-  const allPages = {
-    1: Page1,
-    2: Page2,
+const App = () => {
+  const { page } = useSelector((state) => state.page);
+  const { name } = useSelector((state) => state.name);
+
+  const dispatch = useDispatch();
+
+  const RenderPage = () => {
+    const component = ArrayListOfPages[page - 1];
+    return React.createElement(component);
   };
 
-  function NextBtn() {
-    let currentPage = parseInt(page);
-    let nextPage = currentPage + 1;
-    // setNextPage(nextPage);
-    setPage(nextPage);
-    console.log('page num is:' + nextPage);
-  }
-
-  function PrevBtn() {
-    let currentPage = parseInt(page);
-    let prevPage = currentPage - 1;
-    let pageName = 'Page' + prevPage;
-    const pageComp = allPages[pageName];
-    setPage(prevPage);
-  }
-
-  function pullName() {}
-
-  useEffect(() => {
-    console.log('useEffect - App');
-    setPage(1);
-  }, []);
-
   return (
-    <div className='App'>
-      <Switch page={page} />
-      <div className='div-first-page'>
-        {page > 1 && <button onClick={PrevBtn}>Prev</button>}
-        <p>{page}/3</p>
-        <button onClick={NextBtn}>Next</button>
+    <Provider store={store}>
+      {RenderPage()}
+      <div className='div-button'>
+        {page > 1 && <button onClick={() => dispatch(prevPage())}>Prev</button>}
+        <h4>
+          {page}/{ArrayListOfPages.length}
+        </h4>
+        {page === ArrayListOfPages.length ? (
+          <button>Finish </button>
+        ) : (
+          <button disabled={name === ''} onClick={() => dispatch(nextPage())}>
+            Next
+          </button>
+        )}
       </div>
-    </div>
+    </Provider>
   );
-}
+};
 
 export default App;

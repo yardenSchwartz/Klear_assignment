@@ -37,6 +37,11 @@
   }
 }
 
-.div-first-page {
+.div-button {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  right: 50%;
 }
